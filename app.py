@@ -3,38 +3,70 @@ import streamlit as st
 import numpy as np
 import pickle
 
-# Load model and scaler
+# ---------------- Load Model ---------------- #
+
 model = pickle.load(open("breast_cancer_model.pkl","rb"))
 scaler = pickle.load(open("scaler.pkl","rb"))
 
-st.title("Breast Cancer Prediction System")
+# ---------------- Sidebar ---------------- #
 
-st.write("Enter tumor feature values")
+st.sidebar.title("Navigation")
+page = st.sidebar.radio("Go to", ["Home","Prediction"])
 
-features = []
+# ---------------- Home Page ---------------- #
 
-feature_names = [
-'radius_mean','texture_mean','perimeter_mean','area_mean','smoothness_mean',
-'compactness_mean','concavity_mean','concave points_mean','symmetry_mean','fractal_dimension_mean',
-'radius_se','texture_se','perimeter_se','area_se','smoothness_se',
-'compactness_se','concavity_se','concave points_se','symmetry_se','fractal_dimension_se',
-'radius_worst','texture_worst','perimeter_worst','area_worst','smoothness_worst',
-'compactness_worst','concavity_worst','concave points_worst','symmetry_worst','fractal_dimension_worst'
-]
+if page == "Home":
 
-for feature in feature_names:
-    value = st.number_input(feature)
-    features.append(value)
+    st.title("Breast Cancer Prediction System")
 
-if st.button("Predict"):
+    st.write("""
+    This Machine Learning web application predicts whether a tumor is **Benign** or **Malignant** 
+    using medical tumor measurements.
+    """)
 
-    features = np.array([features])
+    st.subheader("Project Information")
 
-    features = scaler.transform(features)
+    st.write("""
+    - Model Type: Machine Learning Classification
+    - Algorithm: Logistic Regression / Random Forest
+    - Dataset: Breast Cancer Dataset
+    - Platform: Streamlit Cloud
+    """)
 
-    prediction = model.predict(features)
+    st.subheader("Features Used")
 
-    if prediction[0] == 1:
-        st.error("Malignant Tumor Detected")
-    else:
-        st.success("Benign Tumor Detected")
+    st.write("""
+    - Radius Mean  
+    - Texture Mean  
+    - Perimeter Mean  
+    - Area Mean  
+    """)
+
+    st.success("Use the sidebar to go to Prediction page")
+
+
+# ---------------- Prediction Page ---------------- #
+
+if page == "Prediction":
+
+    st.title("Tumor Prediction")
+
+    st.write("Enter tumor measurements below")
+
+    radius_mean = st.number_input("Radius Mean")
+    texture_mean = st.number_input("Texture Mean")
+    perimeter_mean = st.number_input("Perimeter Mean")
+    area_mean = st.number_input("Area Mean")
+
+    if st.button("Predict"):
+
+        features = np.array([[radius_mean,texture_mean,perimeter_mean,area_mean]])
+
+        features = scaler.transform(features)
+
+        prediction = model.predict(features)
+
+        if prediction[0] == 1:
+            st.error("Malignant Tumor")
+        else:
+            st.success("Benign Tumor")
