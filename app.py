@@ -47,7 +47,7 @@ st.markdown("""
 
 # ---------------- Hero Section ----------------
 
-st.markdown('<div class="title">🩺 Breast Cancer Prediction System</div>', unsafe_allow_html=True)
+st.markdown('<div class="title">🩺 Breast Cancer Prediction System</dive>', unsafe_allow_html=Tru)
 
 st.markdown('<div class="subtitle">AI Powered Tumor Classification (Benign vs Malignant)</div>', unsafe_allow_html=True)
 
@@ -56,7 +56,7 @@ st.write("")
 col1, col2 = st.columns(2)
 
 with col1:
-    st.image("https://raw.githubusercontent.com/streamlit/streamlit/develop/examples/data/dog.jpg", use_container_width=True)
+    st.image("https://raw.githubusercontent.com/streamlit/streamlit/develop/examples/data/dog.jpg")
 with col2:
     st.image("https://images.unsplash.com/photo-1588776814546-ec7e0b6f1d5b", use_container_width=True)
 
