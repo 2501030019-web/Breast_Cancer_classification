@@ -97,9 +97,9 @@ st.write("")
 
 # ---------------- Footer ----------------
 
-st.markdown("""
-<hr>
-<center style='color:gray'>
-Developed by Ayush Krishna Sahoo | AI & ML Project
-</center>
-""", unsafe_allow_html=True)
+# st.markdown("""
+# <hr>
+# <center style='color:gray'>
+# Developed by Ayush Krishna Sahoo | AI & ML Project
+# </center>
+# """, unsafe_allow_html=True)
