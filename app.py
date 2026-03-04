@@ -14,25 +14,115 @@ st.set_page_config(page_title="Breast Cancer AI", layout="wide")
 st.markdown("""
 <style>
 
-/* PREMIUM DARK MEDICAL BACKGROUND */
-.stApp {
-    background-image: url("https://images.unsplash.com/photo-1581093458791-9f3c3900df4b");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
+/* REMOVE SIDEBAR */
+section[data-testid="stSidebar"] {
+    display: none;
 }
 
-/* DARK OVERLAY FOR PROFESSIONAL LOOK */
+/* SMOOTH SCROLL */
+html {
+    scroll-behavior: smooth;
+}
+
+/* PARALLAX BACKGROUND */
+.stApp {
+    background-image: url("https://images.unsplash.com/photo-1579154204601-01588f351e5d");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;   /* PARALLAX EFFECT */
+}
+
+/* DARK OVERLAY */
 .stApp::before {
     content: "";
     position: fixed;
-    top: 0;
-    left: 0;
+    top: 0; left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(5, 5, 15, 0.88);
+    background: linear-gradient(
+        rgba(10,10,20,0.95),
+        rgba(20,0,30,0.95)
+    );
     z-index: -1;
+}
+
+/* TITLE ANIMATION */
+.title {
+    font-size: 70px;
+    font-weight: bold;
+    text-align: center;
+    color: #ff2e88;
+    margin-top: 80px;
+    animation: fadeDown 1.5s ease-in-out;
+}
+
+.subtitle {
+    text-align: center;
+    color: #dddddd;
+    font-size: 22px;
+    margin-bottom: 60px;
+    animation: fadeUp 2s ease-in-out;
+}
+
+/* FADE ANIMATION */
+@keyframes fadeDown {
+    from {opacity:0; transform: translateY(-40px);}
+    to {opacity:1; transform: translateY(0);}
+}
+
+@keyframes fadeUp {
+    from {opacity:0; transform: translateY(40px);}
+    to {opacity:1; transform: translateY(0);}
+}
+
+/* GLASS CARD */
+.card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,46,136,0.3);
+    backdrop-filter: blur(18px);
+    padding: 60px;
+    border-radius: 30px;
+    margin: 60px auto;
+    width: 80%;
+    transition: all 0.6s ease;
+    animation: slideIn 1.5s ease;
+}
+
+/* CARD HOVER */
+.card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0px 0px 50px rgba(255,46,136,0.5);
+}
+
+/* CARD ANIMATION */
+@keyframes slideIn {
+    from {opacity:0; transform: translateY(100px);}
+    to {opacity:1; transform: translateY(0);}
+}
+
+/* BUTTON ANIMATION */
+.stButton>button {
+    background: linear-gradient(45deg, #ff2e88, #ff6bb5);
+    color: white;
+    border-radius: 40px;
+    padding: 12px 30px;
+    border: none;
+    font-size: 16px;
+    transition: all 0.4s ease;
+}
+
+.stButton>button:hover {
+    transform: scale(1.15);
+    box-shadow: 0px 0px 20px #ff2e88;
+}
+
+/* SCROLL INDICATOR EFFECT */
+body::-webkit-scrollbar {
+    width: 8px;
+}
+body::-webkit-scrollbar-thumb {
+    background: #ff2e88;
+    border-radius: 10px;
 }
 
 </style>
