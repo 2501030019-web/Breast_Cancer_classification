@@ -56,7 +56,7 @@ st.write("")
 col1, col2 = st.columns(2)
 
 with col1:
-    st.image("medical.jpg", use_container_width=True)
+    st.image("medical-banner-with-doctor-wearing-equipment (1).jpg", use_container_width=True)
 )
 
 with col2:
