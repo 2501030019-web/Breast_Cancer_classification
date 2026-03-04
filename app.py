@@ -123,6 +123,7 @@ body::-webkit-scrollbar {
 body::-webkit-scrollbar-thumb {
     background: #ff2e88;
     border-radius: 10px;
+    background-attachment: fixed;
 }
 
 </style>
