@@ -87,6 +87,31 @@ section[data-testid="stSidebar"] {
 
 </style>
 """, unsafe_allow_html=True)
+st.markdown("""
+<style>
+
+/* FULL DARK MEDICAL BACKGROUND */
+.stApp {
+    background-image: url("https://images.unsplash.com/photo-1530026186672-2cd00ffc50fe");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+/* EXTRA DARK OVERLAY */
+.stApp::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.92);  /* More Dark */
+    z-index: -1;
+}
+
+</style>
+""", unsafe_allow_html=True)
 
 # ---------------- NAVIGATION STATE ----------------
 if "page" not in st.session_state:
