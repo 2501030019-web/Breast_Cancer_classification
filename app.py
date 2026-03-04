@@ -19,100 +19,90 @@ section[data-testid="stSidebar"] {
     display: none;
 }
 
-/* DARK BACKGROUND IMAGE */
+/* MEDICAL DARK BACKGROUND */
 .stApp {
-    background-image: url("https://images.unsplash.com/photo-1588776814546-1ffcf47267a5");
+    background-image: url("https://images.unsplash.com/photo-1579154204601-01588f351e5d");
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
 }
 
+/* DARK MEDICAL OVERLAY */
 .stApp::before {
     content: "";
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
-    background: rgba(0,0,0,0.85);
+    background: linear-gradient(
+        rgba(10,10,15,0.95),
+        rgba(20,10,20,0.95)
+    );
     z-index: -1;
 }
 
-/* TOP NAVIGATION */
+/* NAVBAR */
 .navbar {
     display: flex;
     justify-content: center;
-    gap: 40px;
-    padding: 15px;
-    background: rgba(0,0,0,0.6);
+    gap: 50px;
+    padding: 20px;
+    background: rgba(0,0,0,0.7);
     backdrop-filter: blur(10px);
     border-radius: 15px;
 }
 
-.navbar button {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 18px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.navbar button:hover {
-    color: #ff4b7d;
-    transform: scale(1.1);
-}
-
 /* TITLE */
 .title {
-    font-size: 55px;
+    font-size: 60px;
     font-weight: bold;
     text-align: center;
-    color: #ff4b7d;
-    margin-top: 30px;
+    color: #ff2e88;  /* Breast cancer pink */
+    margin-top: 40px;
+    letter-spacing: 2px;
+}
+
+/* SUBTITLE */
+.subtitle {
+    text-align: center;
+    color: #dddddd;
+    font-size: 22px;
+    margin-bottom: 40px;
 }
 
 /* GLASS CARD */
 .card {
-    background: rgba(255,255,255,0.08);
-    backdrop-filter: blur(15px);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 46, 136, 0.3);
+    backdrop-filter: blur(18px);
     padding: 40px;
-    border-radius: 20px;
-    margin: 30px 0;
+    border-radius: 25px;
+    margin: 30px auto;
+    width: 80%;
     transition: 0.4s;
 }
 
 .card:hover {
-    transform: scale(1.03);
-    box-shadow: 0px 0px 40px rgba(255,0,90,0.4);
+    transform: scale(1.02);
+    box-shadow: 0px 0px 40px rgba(255, 46, 136, 0.5);
+}
+
+/* BUTTON STYLE */
+.stButton>button {
+    background: linear-gradient(45deg, #ff2e88, #ff6bb5);
+    color: white;
+    border-radius: 30px;
+    padding: 10px 25px;
+    border: none;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+.stButton>button:hover {
+    transform: scale(1.1);
 }
 
 </style>
 """, unsafe_allow_html=True)
-st.markdown("""
-<style>
-
-/* FULL DARK MEDICAL BACKGROUND */
-.stApp {
-    background-image: url("https://images.unsplash.com/photo-1530026186672-2cd00ffc50fe");
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-}
-
-/* EXTRA DARK OVERLAY */
-.stApp::before {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.92);  /* More Dark */
-    z-index: -1;
-}
-
-</style>
-""", unsafe_allow_html=True)
-
 # ---------------- NAVIGATION STATE ----------------
 if "page" not in st.session_state:
     st.session_state.page = "Home"
