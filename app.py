@@ -19,10 +19,25 @@ section[data-testid="stSidebar"] {
     display: none;
 }
 
-/* FULL DARK MEDICAL GRADIENT BACKGROUND */
+/* DARK MEDICAL BACKGROUND IMAGE */
 .stApp {
-    background: linear-gradient(135deg, #0f0c29, #1a0d1f, #000000);
-    background-attachment: fixed;
+    background-image: url("https://images.unsplash.com/photo-1579154204601-01588f351e5d");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;   /* Parallax scroll effect */
+}
+
+/* DARK OVERLAY FOR BETTER VISIBILITY */
+.stApp::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(5, 5, 15, 0.90);
+    z-index: -1;
 }
 
 /* TITLE */
@@ -41,60 +56,7 @@ section[data-testid="stSidebar"] {
     margin-bottom: 50px;
 }
 
-/* NAVIGATION BAR */
-.navbar {
-    display: flex;
-    justify-content: center;
-    gap: 50px;
-    padding: 20px;
-    background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(10px);
-    border-radius: 15px;
-    margin-top: 20px;
-}
-
-/* GLASS CARD */
-.card {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,46,136,0.3);
-    backdrop-filter: blur(15px);
-    padding: 40px;
-    border-radius: 25px;
-    margin: 30px auto;
-    width: 85%;
-    transition: 0.4s;
-}
-
-.card:hover {
-    transform: scale(1.02);
-    box-shadow: 0px 0px 40px rgba(255,46,136,0.4);
-}
-
-/* STAT BOX */
-.stat {
-    background: rgba(255,46,136,0.1);
-    padding: 30px;
-    border-radius: 20px;
-    text-align: center;
-    font-size: 22px;
-    color: white;
-    border: 1px solid rgba(255,46,136,0.4);
-}
-
-/* BUTTON */
-.stButton>button {
-    background: linear-gradient(45deg, #ff2e88, #ff6bb5);
-    color: white;
-    border-radius: 30px;
-    padding: 10px 25px;
-    border: none;
-    font-size: 16px;
-    transition: 0.3s;
-}
-
-.stButton>button:hover {
-    transform: scale(1.1);
-}
+/* (Rest of your CSS same rahega) */
 
 </style>
 """, unsafe_allow_html=True)
