@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from sklearn.datasets import load_breast_cancer
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
-       
+from sklearn.metrics import accuracy_score
 
 # ---------------- PAGE CONFIG ----------------
 st.set_page_config(page_title="Breast Cancer AI", layout="wide")
@@ -198,4 +198,4 @@ elif st.session_state.page == "Visualization":
     importance.sort_values().plot(kind='barh', figsize=(8,10))
     st.pyplot(plt)
 
-    st.markdown('</div>', unsafe_allow_html=True)      
+    st.markdown('</div>', unsafe_allow_html=True)
