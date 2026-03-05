@@ -148,7 +148,7 @@ with col4:
         st.session_state.page = "Visualization"
 
 # ---------------- TITLE ----------------
-st.markdown('<div class="title">🎗 Breast Cancer AI Detection</div>', unsafe_allow_html=True)
+st.markdown('<div class="title">🎗 Breast Cancer Classification</div>', unsafe_allow_html=True)
 st.markdown('<div class="subtitle">AI Powered Early Tumor Classification System</div>', unsafe_allow_html=True)
 
 # ---------------- LOAD DATA ----------------
