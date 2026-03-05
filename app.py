@@ -97,20 +97,18 @@ section[data-testid="stSidebar"] {
 }
 
 .stApp {
-    background-image: url("https://images.unsplash.com/photo-1535223289827-42f1e9919769?auto=format&fit=crop&w=2000&q=80");
+    background-image: url("https://images.unsplash.com/photo-1518779578993-ec3579fee39f?auto=format&fit=crop&w=2000&q=80");
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
-    background-repeat: no-repeat;
 }
 
-/* Slight overlay only */
 .stApp::before {
     content:"";
     position:fixed;
     top:0; left:0;
     width:100%; height:100%;
-    background: rgba(0,0,0,0.85);
+    background: rgba(0,0,0,0.92);
     z-index:-1;
 }
 
