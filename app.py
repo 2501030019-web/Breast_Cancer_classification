@@ -200,39 +200,43 @@ elif st.session_state.page == "Dataset":
 
 # ================= PREDICTION =================
 
-st.header("Breast Cancer Prediction")
+# ---------------- PREDICTION ----------------
 
-uploaded_file = st.file_uploader("Upload your CSV file", type=["csv"])
+elif st.session_state.page == "Prediction":
 
-if uploaded_file is not None:
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.header("🔮 Upload CSV for Prediction")
 
-    try:
-        # Read CSV
-        data = pd.read_csv(uploaded_file)
+    uploaded_file = st.file_uploader("Upload Breast Cancer CSV file", type=["csv"])
 
-        # Remove unnecessary columns if present
-        if 'id' in data.columns:
-            data = data.drop(columns=['id'])
+    if uploaded_file is not None:
 
-        if 'diagnosis' in data.columns:
-            data = data.drop(columns=['diagnosis'])
+        try:
+            data = pd.read_csv(uploaded_file)
 
-        if 'Unnamed: 32' in data.columns:
-            data = data.drop(columns=['Unnamed: 32'])
+            # remove unwanted columns
+            data = data.drop(columns=["id", "diagnosis", "Unnamed: 32"], errors="ignore")
 
-        # Prediction
-        prediction = model.predict(data)
+            # ensure same columns as training data
+            data = data[X.columns]
 
-        st.subheader("Prediction Result")
+            # prediction
+            prediction = model.predict(data)
 
-        if prediction[0] == 0:
-            st.success("🎗 Result: Benign (Non-Cancerous)")
-        else:
-            st.error("🎗 Result: Malignant (Cancerous)")
+            # convert result
+            result = ["Malignant" if p == 0 else "Benign" for p in prediction]
 
-    except Exception as e:
-        st.error("CSV format incorrect. Please upload correct dataset format.")
-        st.write(e)
+            data["Prediction"] = result
+
+            st.success("Prediction Completed ✅")
+
+            st.dataframe(data)
+
+        except Exception as e:
+            st.error("CSV format incorrect. Please upload correct dataset.")
+            st.write(e)
+
+    st.markdown('</div>', unsafe_allow_html=True)
 # ---------------- VISUALIZATION ----------------
 elif st.session_state.page == "Visualization":
 
