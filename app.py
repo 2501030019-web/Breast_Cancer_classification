@@ -13,109 +13,64 @@ st.set_page_config(page_title="Breast Cancer Prediction", layout="wide")
 # ---------------- CUSTOM CSS ----------------
 st.markdown("""
 <style>
-
-/* REMOVE SIDEBAR */
-section[data-testid="stSidebar"] {
-    display: none;
-}
-
-/* DARK BACKGROUND IMAGE */
 .stApp {
     background-image: url("https://images.unsplash.com/photo-1588776814546-1ffcf47267a5");
     background-size: cover;
-    background-position: center;
     background-attachment: fixed;
+    background-position: center;
 }
-
 .stApp::before {
     content: "";
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
-    background: rgba(0,0,0,0.85);
+    background: rgba(0,0,0,0.75);
     z-index: -1;
 }
-
-/* TOP NAVIGATION */
-.navbar {
-    display: flex;
-    justify-content: center;
-    gap: 40px;
-    padding: 15px;
-    background: rgba(0,0,0,0.6);
-    backdrop-filter: blur(10px);
-    border-radius: 15px;
-}
-
-.navbar button {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 18px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.navbar button:hover {
-    color: #ff4b7d;
-    transform: scale(1.1);
-}
-
-/* TITLE */
 .title {
-    font-size: 55px;
+    font-size: 50px;
     font-weight: bold;
     text-align: center;
     color: #ff4b7d;
-    margin-top: 30px;
+    animation: fadeIn 2s ease-in-out;
 }
-
-/* GLASS CARD */
+@keyframes fadeIn {
+    0% {opacity:0; transform: translateY(-20px);}
+    100% {opacity:1; transform: translateY(0);}
+}
 .card {
-    background: rgba(255,255,255,0.08);
-    backdrop-filter: blur(15px);
-    padding: 40px;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(12px);
+    padding: 30px;
     border-radius: 20px;
-    margin: 30px 0;
+    margin: 20px 0;
     transition: 0.4s;
+    animation: slideUp 1.5s ease-in-out;
 }
-
 .card:hover {
     transform: scale(1.03);
-    box-shadow: 0px 0px 40px rgba(255,0,90,0.4);
+    box-shadow: 0px 0px 30px rgba(255,0,90,0.5);
 }
-
+@keyframes slideUp {
+    from {opacity:0; transform: translateY(50px);}
+    to {opacity:1; transform: translateY(0);}
+}
 </style>
 """, unsafe_allow_html=True)
 
-# ---------------- NAVIGATION STATE ----------------
-if "page" not in st.session_state:
-    st.session_state.page = "Home"
-
-# ---------------- TOP NAVIGATION ----------------
-col1, col2, col3, col4 = st.columns(4)
-
-with col1:
-    if st.button("🏠 Home"):
-        st.session_state.page = "Home"
-
-with col2:
-    if st.button("📊 About Dataset"):
-        st.session_state.page = "About"
-
-with col3:
-    if st.button("🔮 Prediction"):
-        st.session_state.page = "Prediction"
-
-with col4:
-    if st.button("📈 Visualization"):
-        st.session_state.page = "Visualization"
-
 # ---------------- TITLE ----------------
-st.markdown('<div class="title">Breast Cancer Prediction System</div>', unsafe_allow_html=True)
-st.markdown("<h3 style='text-align:center; color:white;'>AI Powered Tumor Classification (Benign vs Malignant)</h3>", unsafe_allow_html=True)
+st.markdown('<div class="title">🩺 Breast Cancer Prediction System</div>', unsafe_allow_html=True)
+st.write("### AI Powered Tumor Classification (Benign vs Malignant)")
 
-# ---------------- LOAD DATA ----------------
+# ---------------- SIDEBAR ----------------
+st.sidebar.title("Navigation")
+page = st.sidebar.radio("Go To",
+                        ["🏠 Home",
+                         "📊 About Dataset",
+                         "🔮 Prediction",
+                         "📈 Visualization"])
+
+# ---------------- LOAD DATA & TRAIN MODEL ----------------
 data = load_breast_cancer()
 X = pd.DataFrame(data.data, columns=data.feature_names)
 y = data.target
@@ -128,8 +83,8 @@ model.fit(X_train, y_train)
 
 accuracy = accuracy_score(y_test, model.predict(X_test))
 
-# ---------------- HOME ----------------
-if st.session_state.page == "Home":
+# ---------------- HOME PAGE ----------------
+if page == "🏠 Home":
 
     st.markdown('<div class="card">', unsafe_allow_html=True)
     st.header("📊 Dataset")
@@ -138,47 +93,62 @@ if st.session_state.page == "Home":
 
     st.markdown('<div class="card">', unsafe_allow_html=True)
     st.header("🤖 Model")
-    st.write("Logistic Regression ML Model trained with high accuracy.")
+    st.write("Logistic Regression Machine Learning model trained on real dataset.")
     st.markdown('</div>', unsafe_allow_html=True)
 
     st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.header("⚡ Accuracy")
+    st.header("⚡ Model Accuracy")
     st.success(f"Model Accuracy: {round(accuracy*100,2)}%")
     st.markdown('</div>', unsafe_allow_html=True)
 
-# ---------------- ABOUT ----------------
-elif st.session_state.page == "About":
-
     st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.header("Dataset Preview")
-    st.dataframe(X.head())
+    st.header("💡 Why This Project?")
+    st.write("""
+    • Early detection saves lives  
+    • AI powered healthcare solution  
+    • Real time prediction system  
+    • User friendly web interface  
+    """)
     st.markdown('</div>', unsafe_allow_html=True)
 
-# ---------------- PREDICTION ----------------
-elif st.session_state.page == "Prediction":
+# ---------------- ABOUT DATASET ----------------
+elif page == "📊 About Dataset":
+
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.header("Dataset Information")
+    st.write(X.head())
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# ---------------- PREDICTION PAGE ----------------
+elif page == "🔮 Prediction":
 
     st.markdown('<div class="card">', unsafe_allow_html=True)
     st.header("Upload CSV for Prediction")
 
-    uploaded_file = st.file_uploader("Upload CSV", type=["csv"])
+    uploaded_file = st.file_uploader("Upload your CSV file", type=["csv"])
 
     if uploaded_file:
         user_data = pd.read_csv(uploaded_file)
-        prediction = model.predict(user_data)
-        user_data["Prediction"] = prediction
-        user_data["Prediction"] = user_data["Prediction"].map(
-            {0: "Malignant", 1: "Benign"})
 
-        st.success("Prediction Completed!")
-        st.dataframe(user_data)
+        try:
+            prediction = model.predict(user_data)
+            user_data["Prediction"] = prediction
+            user_data["Prediction"] = user_data["Prediction"].map(
+                {0: "Malignant", 1: "Benign"})
+
+            st.success("Prediction Completed!")
+            st.dataframe(user_data)
+
+        except:
+            st.error("⚠ Please upload correct formatted dataset (30 features required).")
 
     st.markdown('</div>', unsafe_allow_html=True)
 
-# ---------------- VISUALIZATION ----------------
-elif st.session_state.page == "Visualization":
+# ---------------- VISUALIZATION PAGE ----------------
+elif page == "📈 Visualization":
 
     st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.header("Feature Importance")
+    st.header("Feature Importance Visualization")
 
     importance = pd.Series(model.coef_[0], index=X.columns)
     importance.sort_values().plot(kind='barh', figsize=(8,10))
