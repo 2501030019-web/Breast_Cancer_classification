@@ -200,56 +200,39 @@ elif st.session_state.page == "Dataset":
 
 # ================= PREDICTION =================
 
-# ---------------- PREDICTION ----------------
-elif st.session_state.page == "Prediction":
+st.header("Breast Cancer Prediction")
 
-    st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.header("🔮 Upload CSV for Prediction")
+uploaded_file = st.file_uploader("Upload your CSV file", type=["csv"])
 
-    uploaded_file = st.file_uploader("Upload CSV file", type=["csv"])
+if uploaded_file is not None:
 
-    if uploaded_file is not None:
-
+    try:
+        # Read CSV
         data = pd.read_csv(uploaded_file)
 
-        st.write("Uploaded Data")
-        st.dataframe(data.head())
+        # Remove unnecessary columns if present
+        if 'id' in data.columns:
+            data = data.drop(columns=['id'])
 
-        # Drop extra columns
-        data = data.drop(columns=["id", "diagnosis", "Unnamed: 32"], errors="ignore")
+        if 'diagnosis' in data.columns:
+            data = data.drop(columns=['diagnosis'])
 
-        # Rename columns from Kaggle format → sklearn format
-        data = data.rename(columns={
-            "radius error":"radius_se",
-            "texture error":"texture_se",
-            "perimeter error":"perimeter_se",
-            "area error":"area_se",
-            "smoothness error":"smoothness_se",
-            "compactness error":"compactness_se",
-            "concavity error":"concavity_se",
-            "concave points error":"concave points_se",
-            "symmetry error":"symmetry_se",
-            "fractal dimension error":"fractal_dimension_se"
-        })
+        if 'Unnamed: 32' in data.columns:
+            data = data.drop(columns=['Unnamed: 32'])
 
-        try:
+        # Prediction
+        prediction = model.predict(data)
 
-            # Match training columns exactly
-            data = data[X.columns]
+        st.subheader("Prediction Result")
 
-            prediction = model.predict(data)
+        if prediction[0] == 0:
+            st.success("🎗 Result: Benign (Non-Cancerous)")
+        else:
+            st.error("🎗 Result: Malignant (Cancerous)")
 
-            data["Prediction"] = prediction
-            data["Prediction"] = data["Prediction"].map({
-                0: "Malignant (Cancer)",
-                1: "Benign (No Cancer)"
-            })
-
-            st.success("Prediction Completed Successfully")
-            st.dataframe(data)
-
-        except Exception as e:
-            st.error("CSV columns do not match the model training dataset.")
+    except Exception as e:
+        st.error("CSV format incorrect. Please upload correct dataset format.")
+        st.write(e)
 # ---------------- VISUALIZATION ----------------
 elif st.session_state.page == "Visualization":
 
