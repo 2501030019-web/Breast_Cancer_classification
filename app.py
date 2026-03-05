@@ -1,250 +1,183 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.datasets import load_breast_cancer
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 
-# ---------------- PAGE CONFIG ----------------
 st.set_page_config(page_title="Breast Cancer AI", layout="wide")
 
-# ---------------- CUSTOM CSS ----------------
-st.markdown("""
-<style>
-
-/* REMOVE SIDEBAR */
-section[data-testid="stSidebar"] {
-    display: none;
-}
-
-/* FULL DARK MEDICAL GRADIENT BACKGROUND */
-.stApp {
-    background: linear-gradient(135deg, #0f0c29, #1a0d1f, #000000);
-    background-attachment: fixed;
-}
-
-/* TITLE */
-.title {
-    font-size: 65px;
-    font-weight: bold;
-    text-align: center;
-    color: #ff2e88;
-    margin-top: 40px;
-}
-
-.subtitle {
-    text-align: center;
-    color: #dddddd;
-    font-size: 22px;
-    margin-bottom: 50px;
-}
-
-/* NAVIGATION BAR */
-.navbar {
-    display: flex;
-    justify-content: center;
-    gap: 50px;
-    padding: 20px;
-    background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(10px);
-    border-radius: 15px;
-    margin-top: 20px;
-}
-
-/* GLASS CARD */
-.card {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,46,136,0.3);
-    backdrop-filter: blur(15px);
-    padding: 40px;
-    border-radius: 25px;
-    margin: 30px auto;
-    width: 85%;
-    transition: 0.4s;
-}
-
-.card:hover {
-    transform: scale(1.02);
-    box-shadow: 0px 0px 40px rgba(255,46,136,0.4);
-}
-
-/* STAT BOX */
-.stat {
-    background: rgba(255,46,136,0.1);
-    padding: 30px;
-    border-radius: 20px;
-    text-align: center;
-    font-size: 22px;
-    color: white;
-    border: 1px solid rgba(255,46,136,0.4);
-}
-
-/* BUTTON */
-.stButton>button {
-    background: linear-gradient(45deg, #ff2e88, #ff6bb5);
-    color: white;
-    border-radius: 30px;
-    padding: 10px 25px;
-    border: none;
-    font-size: 16px;
-    transition: 0.3s;
-}
-
-.stButton>button:hover {
-    transform: scale(1.1);
-}
-
-/* REMOVE SIDEBAR */
-section[data-testid="stSidebar"] {
-    display: none;
-}
-
-/* DARK BACKGROUND IMAGE */
-.stApp {
-    background-image: url("https://images.pexels.com/photos/5726708/pexels-photo-5726708.jpeg");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-}
-
-/* STRONG DARK OVERLAY */
-.stApp::before {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-        rgba(0, 0, 0, 0.92),
-        rgba(0, 0, 0, 0.95)
-    );
-    z-index: -1;
-}
-
-
-</style>
-""", unsafe_allow_html=True)
-
-# ---------------- NAVIGATION ----------------
+# ---------------- SESSION ----------------
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+if "users" not in st.session_state:
+    st.session_state.users = {}
 if "page" not in st.session_state:
     st.session_state.page = "Home"
 
-col1, col2, col3, col4 = st.columns(4)
+# ---------------- CSS ----------------
+st.markdown("""
+<style>
+.stApp {
+    background-image: url("https://images.unsplash.com/photo-1581093458791-9f3c3900df4b");
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+}
+.stApp::before {
+    content:"";
+    position:fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    background: rgba(0,0,0,0.92);
+    z-index:-1;
+}
+.card {
+    background:rgba(255,255,255,0.05);
+    padding:30px;
+    border-radius:20px;
+    backdrop-filter: blur(15px);
+    border:1px solid rgba(255,46,136,0.3);
+    margin-bottom:30px;
+}
+.title {
+    font-size:50px;
+    color:#ff2e88;
+}
+.footer {
+    margin-top:80px;
+    padding:30px;
+    background:rgba(0,0,0,0.8);
+    text-align:center;
+    color:white;
+}
+</style>
+""", unsafe_allow_html=True)
 
-with col1:
-    if st.button("🏠 Home"):
-        st.session_state.page = "Home"
-with col2:
-    if st.button("📊 Dataset"):
-        st.session_state.page = "Dataset"
-with col3:
-    if st.button("🔮 Prediction"):
-        st.session_state.page = "Prediction"
-with col4:
-    if st.button("📈 Visualization"):
-        st.session_state.page = "Visualization"
+# ---------------- LAYOUT ----------------
+left, right = st.columns([1,3])
 
-# ---------------- TITLE ----------------
-st.markdown('<div class="title"> Breast Cancer Classification</div>', unsafe_allow_html=True)
-st.markdown('<div class="subtitle">AI Powered Early Tumor Classification System</div>', unsafe_allow_html=True)
+# ---------------- LEFT SIDE LOGIN PANEL ----------------
+with left:
+    st.markdown("## 🎗 User Panel")
 
-# ---------------- LOAD DATA ----------------
-data = load_breast_cancer()
-X = pd.DataFrame(data.data, columns=data.feature_names)
-y = data.target
+    if not st.session_state.logged_in:
 
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42)
+        option = st.radio("Select", ["Login", "Sign Up"])
 
-model = LogisticRegression(max_iter=5000)
-model.fit(X_train, y_train)
+        if option == "Login":
+            username = st.text_input("Username")
+            password = st.text_input("Password", type="password")
 
-accuracy = accuracy_score(y_test, model.predict(X_test))
+            if st.button("Login"):
+                if username in st.session_state.users and st.session_state.users[username] == password:
+                    st.session_state.logged_in = True
+                    st.success("Login Successful")
+                    st.rerun()
+                else:
+                    st.error("Invalid Credentials")
 
-# ---------------- HOME ----------------
-if st.session_state.page == "Home":
+        else:
+            new_user = st.text_input("Create Username")
+            new_pass = st.text_input("Create Password", type="password")
 
-    col1, col2, col3 = st.columns(3)
+            if st.button("Create Account"):
+                st.session_state.users[new_user] = new_pass
+                st.success("Account Created! Please Login.")
 
-    with col1:
-        st.markdown('<div class="stat">📊 30+ Features</div>', unsafe_allow_html=True)
-    with col2:
-        st.markdown(f'<div class="stat">⚡ {round(accuracy*100,2)}% Accuracy</div>', unsafe_allow_html=True)
-    with col3:
-        st.markdown('<div class="stat">🤖 Logistic Regression Model</div>', unsafe_allow_html=True)
+    else:
+        st.success("Logged In")
+        if st.button("Logout"):
+            st.session_state.logged_in = False
+            st.rerun()
 
-    st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.header("🩺 About This Project")
-    st.write("""
-    This AI system helps in early detection of breast cancer tumors 
-    using machine learning classification techniques.
-    
-    ✔ Fast prediction  
-    ✔ Accurate model  
-    ✔ Medical focused UI  
-    ✔ Real-time data processing  
-    """)
-    st.markdown('</div>', unsafe_allow_html=True)
+# ---------------- RIGHT SIDE MAIN CONTENT ----------------
+with right:
 
-# ---------------- DATASET ----------------
-elif st.session_state.page == "Dataset":
+    if st.session_state.logged_in:
 
-    st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.header("📊 Dataset Preview")
-    st.dataframe(X.head())
-    st.markdown('</div>', unsafe_allow_html=True)
+        # Navigation
+        col1, col2, col3, col4 = st.columns(4)
 
-# ================= PREDICTION =================
+        with col1:
+            if st.button("🏠 Home"):
+                st.session_state.page = "Home"
+        with col2:
+            if st.button("📊 About Dataset"):
+                st.session_state.page = "Dataset"
+        with col3:
+            if st.button("🔮 Prediction"):
+                st.session_state.page = "Prediction"
+        with col4:
+            if st.button("📈 Visualization"):
+                st.session_state.page = "Visualization"
 
-# ---------------- PREDICTION ----------------
+        st.markdown("<div class='title'>Breast Cancer AI Detection</div>", unsafe_allow_html=True)
+        st.markdown("---")
 
-elif st.session_state.page == "Prediction":
+        # Load & Train Model
+        data = load_breast_cancer()
+        X = pd.DataFrame(data.data, columns=data.feature_names)
+        y = data.target
 
-    st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.header("🔮 Upload CSV for Prediction")
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.2, random_state=42)
 
-    uploaded_file = st.file_uploader("Upload Breast Cancer CSV file", type=["csv"])
+        model = LogisticRegression(max_iter=5000)
+        model.fit(X_train, y_train)
 
-    if uploaded_file is not None:
+        accuracy = accuracy_score(y_test, model.predict(X_test))
 
-        try:
-            data = pd.read_csv(uploaded_file)
+        # HOME
+        if st.session_state.page == "Home":
+            st.markdown("<div class='card'>", unsafe_allow_html=True)
+            st.header("About Project")
+            st.write("AI powered system for early breast cancer detection.")
+            st.success(f"Model Accuracy: {round(accuracy*100,2)}%")
+            st.markdown("</div>", unsafe_allow_html=True)
 
-            # remove unwanted columns
-            data = data.drop(columns=["id", "diagnosis", "Unnamed: 32"], errors="ignore")
+        # DATASET
+        elif st.session_state.page == "Dataset":
+            st.markdown("<div class='card'>", unsafe_allow_html=True)
+            st.header("Dataset Preview")
+            st.dataframe(X.head())
+            st.markdown("</div>", unsafe_allow_html=True)
 
-            # ensure same columns as training data
-            data = data[X.columns]
+        # PREDICTION
+        elif st.session_state.page == "Prediction":
+            st.markdown("<div class='card'>", unsafe_allow_html=True)
+            st.header("Upload CSV for Prediction")
+            uploaded_file = st.file_uploader("Upload CSV", type=["csv"])
 
-            # prediction
-            prediction = model.predict(data)
+            if uploaded_file:
+                user_data = pd.read_csv(uploaded_file)
+                prediction = model.predict(user_data)
+                user_data["Prediction"] = prediction
+                user_data["Prediction"] = user_data["Prediction"].map(
+                    {0: "Malignant", 1: "Benign"})
+                st.dataframe(user_data)
 
-            # convert result
-            result = ["Malignant" if p == 0 else "Benign" for p in prediction]
+            st.markdown("</div>", unsafe_allow_html=True)
 
-            data["Prediction"] = result
+        # VISUALIZATION
+        elif st.session_state.page == "Visualization":
+            st.markdown("<div class='card'>", unsafe_allow_html=True)
+            st.header("Feature Importance")
+            importance = pd.Series(model.coef_[0], index=X.columns)
+            importance.sort_values().plot(kind='barh', figsize=(8,8))
+            st.pyplot(plt)
+            st.markdown("</div>", unsafe_allow_html=True)
 
-            st.success("Prediction Completed ✅")
+        # FOOTER
+        st.markdown("""
+        <div class="footer">
+        <h3>📞 Contact Us</h3>
+        <p>Email: support@breastcancerai.com</p>
+        <p>Phone: +91 9876543210</p>
+        <p>© 2026 Breast Cancer AI</p>
+        </div>
+        """, unsafe_allow_html=True)
 
-            st.dataframe(data)
-
-        except Exception as e:
-            st.error("CSV format incorrect. Please upload correct dataset.")
-            st.write(e)
-
-    st.markdown('</div>', unsafe_allow_html=True)
-# ---------------- VISUALIZATION ----------------
-elif st.session_state.page == "Visualization":
-
-    st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.header("📈 Feature Importance")
-
-    importance = pd.Series(model.coef_[0], index=X.columns)
-    importance.sort_values().plot(kind='barh', figsize=(8,10))
-    st.pyplot(plt)
-
-    st.markdown('</div>', unsafe_allow_html=True)
+    else:
+        st.warning("Please Login to Access the Dashboard")
