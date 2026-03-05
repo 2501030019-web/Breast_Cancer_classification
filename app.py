@@ -200,45 +200,56 @@ elif st.session_state.page == "Dataset":
 
 # ================= PREDICTION =================
 
-# ================= PREDICTION =================
+# ---------------- PREDICTION ----------------
+elif st.session_state.page == "Prediction":
 
-uploaded_file = st.file_uploader("Upload CSV File for Prediction", type=["csv"])
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.header("🔮 Upload CSV for Prediction")
 
-if uploaded_file is not None:
+    uploaded_file = st.file_uploader("Upload CSV file", type=["csv"])
 
-    data = pd.read_csv(uploaded_file)
+    if uploaded_file is not None:
 
-    st.write("Uploaded Data")
-    st.dataframe(data.head())
+        data = pd.read_csv(uploaded_file)
 
-    # Remove unwanted columns
-    data = data.drop(columns=["id", "diagnosis", "Unnamed: 32"], errors="ignore")
+        st.write("Uploaded Data")
+        st.dataframe(data.head())
 
-    # Correct feature order (VERY IMPORTANT)
-    features = [
-        'radius_mean','texture_mean','perimeter_mean','area_mean','smoothness_mean',
-        'compactness_mean','concavity_mean','concave points_mean','symmetry_mean','fractal_dimension_mean',
-        'radius_se','texture_se','perimeter_se','area_se','smoothness_se',
-        'compactness_se','concavity_se','concave points_se','symmetry_se','fractal_dimension_se',
-        'radius_worst','texture_worst','perimeter_worst','area_worst','smoothness_worst',
-        'compactness_worst','concavity_worst','concave points_worst','symmetry_worst','fractal_dimension_worst'
-    ]
+        # Drop extra columns
+        data = data.drop(columns=["id", "diagnosis", "Unnamed: 32"], errors="ignore")
 
-    try:
+        # Rename columns from Kaggle format → sklearn format
+        data = data.rename(columns={
+            "radius error":"radius_se",
+            "texture error":"texture_se",
+            "perimeter error":"perimeter_se",
+            "area error":"area_se",
+            "smoothness error":"smoothness_se",
+            "compactness error":"compactness_se",
+            "concavity error":"concavity_se",
+            "concave points error":"concave points_se",
+            "symmetry error":"symmetry_se",
+            "fractal dimension error":"fractal_dimension_se"
+        })
 
-        data = data[features]
+        try:
 
-        prediction = model.predict(data)
+            # Match training columns exactly
+            data = data[X.columns]
 
-        data["Prediction"] = prediction
-        data["Prediction"] = data["Prediction"].map({0:"Benign",1:"Malignant"})
+            prediction = model.predict(data)
 
-        st.success("Prediction Completed")
+            data["Prediction"] = prediction
+            data["Prediction"] = data["Prediction"].map({
+                0: "Malignant (Cancer)",
+                1: "Benign (No Cancer)"
+            })
 
-        st.dataframe(data)
+            st.success("Prediction Completed Successfully")
+            st.dataframe(data)
 
-    except Exception as e:
-        st.error("CSV format incorrect. Please upload original dataset format.")
+        except Exception as e:
+            st.error("CSV columns do not match the model training dataset.")
 # ---------------- VISUALIZATION ----------------
 elif st.session_state.page == "Visualization":
 
