@@ -198,10 +198,11 @@ elif st.session_state.page == "Dataset":
     st.dataframe(X.head())
     st.markdown('</div>', unsafe_allow_html=True)
 
-# ---------------- PREDICTION ----------------
 # ================= PREDICTION =================
 
-uploaded_file = st.file_uploader("Upload CSV for Prediction", type=["csv"])
+# ================= PREDICTION =================
+
+uploaded_file = st.file_uploader("Upload CSV File for Prediction", type=["csv"])
 
 if uploaded_file is not None:
 
@@ -210,23 +211,34 @@ if uploaded_file is not None:
     st.write("Uploaded Data")
     st.dataframe(data.head())
 
-    # Remove unnecessary columns
+    # Remove unwanted columns
     data = data.drop(columns=["id", "diagnosis", "Unnamed: 32"], errors="ignore")
 
-    # Check feature count
-    if data.shape[1] != 30:
-        st.error("CSV format incorrect. Please upload dataset with same 30 features.")
-    else:
+    # Correct feature order (VERY IMPORTANT)
+    features = [
+        'radius_mean','texture_mean','perimeter_mean','area_mean','smoothness_mean',
+        'compactness_mean','concavity_mean','concave points_mean','symmetry_mean','fractal_dimension_mean',
+        'radius_se','texture_se','perimeter_se','area_se','smoothness_se',
+        'compactness_se','concavity_se','concave points_se','symmetry_se','fractal_dimension_se',
+        'radius_worst','texture_worst','perimeter_worst','area_worst','smoothness_worst',
+        'compactness_worst','concavity_worst','concave points_worst','symmetry_worst','fractal_dimension_worst'
+    ]
+
+    try:
+
+        data = data[features]
+
         prediction = model.predict(data)
 
         data["Prediction"] = prediction
-
-        # Convert 0/1 to Cancer Type
         data["Prediction"] = data["Prediction"].map({0:"Benign",1:"Malignant"})
 
         st.success("Prediction Completed")
 
         st.dataframe(data)
+
+    except Exception as e:
+        st.error("CSV format incorrect. Please upload original dataset format.")
 # ---------------- VISUALIZATION ----------------
 elif st.session_state.page == "Visualization":
 
