@@ -97,23 +97,20 @@ section[data-testid="stSidebar"] {
 }
 
 .stApp {
-    background-image: url("https://images.pexels.com/photos/3786157/pexels-photo-3786157.jpeg");
+    background-image: url("https://images.pexels.com/photos/7089401/pexels-photo-7089401.jpeg");
     background-size: cover;
     background-position: center;
-    background-repeat: no-repeat;
     background-attachment: fixed;
 }
 
-/* Strong Dark Overlay */
 .stApp::before {
-    content: "";
-    position: fixed;
+    content:"";
+    position:fixed;
     top:0; left:0;
     width:100%; height:100%;
-    background: rgba(0,0,0,0.94);
+    background: rgba(0,0,0,0.96);
     z-index:-1;
 }
-
 </style>
 """, unsafe_allow_html=True)
 
