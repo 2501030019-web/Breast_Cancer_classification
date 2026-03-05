@@ -96,6 +96,56 @@ section[data-testid="stSidebar"] {
     transform: scale(1.1);
 }
 
+st.markdown("""
+<style>
+
+/* REMOVE SIDEBAR */
+section[data-testid="stSidebar"] {
+    display: none;
+}
+
+/* DARK MEDICAL BACKGROUND IMAGE */
+.stApp {
+    background-image: url("https://images.unsplash.com/photo-1581093458791-9f3c3900df4b");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;   /* Parallax scroll */
+}
+
+/* DARK OVERLAY FOR BETTER VISIBILITY */
+.stApp::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.88);
+    z-index: -1;
+}
+
+/* TITLE */
+.title {
+    font-size: 65px;
+    font-weight: bold;
+    text-align: center;
+    color: #ff2e88;
+    margin-top: 40px;
+}
+
+.subtitle {
+    text-align: center;
+    color: #dddddd;
+    font-size: 22px;
+    margin-bottom: 50px;
+}
+
+/* Rest CSS same rahega */
+
+</style>
+""", unsafe_allow_html=True)
+
 </style>
 """, unsafe_allow_html=True)
 
