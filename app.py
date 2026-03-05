@@ -116,18 +116,9 @@ with right:
         st.markdown("<div class='title'>Breast Cancer AI Detection</div>", unsafe_allow_html=True)
         st.markdown("---")
 
-        # Load & Train Model
-        data = load_breast_cancer()
-        X = pd.DataFrame(data.data, columns=data.feature_names)
-        y = data.target
-
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=0.2, random_state=42)
-
-        model = LogisticRegression(max_iter=5000)
-        model.fit(X_train, y_train)
-
-        accuracy = accuracy_score(y_test, model.predict(X_test))
+        # Load Model
+        model = pickle.load(open("breast_cancer_model.pkl","rb"))
+        scaler = pickle.load(open("scaler.pkl","rb"))
 
         # HOME
         if st.session_state.page == "Home":
@@ -149,10 +140,20 @@ with right:
             st.markdown("<div class='card'>", unsafe_allow_html=True)
             st.header("Upload CSV for Prediction")
             uploaded_file = st.file_uploader("Upload CSV", type=["csv"])
+            cols = ['radius_mean', 'texture_mean', 'perimeter_mean',
+               'area_mean', 'smoothness_mean', 'compactness_mean', 'concavity_mean',
+               'concave points_mean', 'symmetry_mean', 'fractal_dimension_mean',
+               'radius_se', 'texture_se', 'perimeter_se', 'area_se', 'smoothness_se',
+               'compactness_se', 'concavity_se', 'concave points_se', 'symmetry_se',
+               'fractal_dimension_se', 'radius_worst', 'texture_worst',
+               'perimeter_worst', 'area_worst', 'smoothness_worst',
+               'compactness_worst', 'concavity_worst', 'concave points_worst',
+               'symmetry_worst', 'fractal_dimension_worst']
 
             if uploaded_file:
                 user_data = pd.read_csv(uploaded_file)
-                prediction = model.predict(user_data)
+                scaled_data = scaler.transform(user_data)
+                prediction = model.predict(scaled_data)
                 user_data["Prediction"] = prediction
                 user_data["Prediction"] = user_data["Prediction"].map(
                     {0: "Malignant", 1: "Benign"})
