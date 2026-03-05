@@ -149,7 +149,7 @@ with col4:
         st.session_state.page = "Visualization"
 
 # ---------------- TITLE ----------------
-st.markdown('<div class="title">🎗 Breast Cancer Classification</div>', unsafe_allow_html=True)
+st.markdown('<div class="title"> Breast Cancer Classification</div>', unsafe_allow_html=True)
 st.markdown('<div class="subtitle">AI Powered Early Tumor Classification System</div>', unsafe_allow_html=True)
 
 # ---------------- LOAD DATA ----------------
@@ -204,19 +204,35 @@ elif st.session_state.page == "Prediction":
     st.markdown('<div class="card">', unsafe_allow_html=True)
     st.header("🔮 Upload CSV for Prediction")
 
-    uploaded_file = st.file_uploader("Upload CSV file (30 features required)", type=["csv"])
+    uploaded_file = st.file_uploader("Upload CSV file", type=["csv"])
 
-    if uploaded_file:
+    if uploaded_file is not None:
+
         user_data = pd.read_csv(uploaded_file)
-        prediction = model.predict(user_data)
-        user_data["Prediction"] = prediction
-        user_data["Prediction"] = user_data["Prediction"].map(
-            {0: "Malignant", 1: "Benign"})
 
-        st.success("Prediction Completed Successfully!")
-        st.dataframe(user_data)
+        # show uploaded data
+        st.write("Uploaded Data Preview")
+        st.dataframe(user_data.head())
 
-    st.markdown('</div>', unsafe_allow_html=True)
+        try:
+
+            # IMPORTANT: Match columns with training data
+            user_data = user_data[X.columns]
+
+            prediction = model.predict(user_data)
+
+            user_data["Prediction"] = prediction
+            user_data["Prediction"] = user_data["Prediction"].map({
+                0: "Malignant (Cancer)",
+                1: "Benign (No Cancer)"
+            })
+
+            st.success("Prediction Completed Successfully")
+            st.dataframe(user_data)
+
+        except Exception as e:
+
+            st.error("CSV format incorrect. Please upload dataset with same 30 features.")
 
 # ---------------- VISUALIZATION ----------------
 elif st.session_state.page == "Visualization":
