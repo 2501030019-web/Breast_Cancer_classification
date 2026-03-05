@@ -96,21 +96,35 @@ section[data-testid="stSidebar"] {
     transform: scale(1.1);
 }
 
+/* REMOVE SIDEBAR */
+section[data-testid="stSidebar"] {
+    display: none;
+}
+
+/* DARK BACKGROUND IMAGE */
 .stApp {
-    background-image: url("https://images.unsplash.com/photo-1518779578993-ec3579fee39f?auto=format&fit=crop&w=2000&q=80");
+    background-image: url("https://images.pexels.com/photos/5726708/pexels-photo-5726708.jpeg");
     background-size: cover;
     background-position: center;
+    background-repeat: no-repeat;
     background-attachment: fixed;
 }
 
+/* STRONG DARK OVERLAY */
 .stApp::before {
-    content:"";
-    position:fixed;
-    top:0; left:0;
-    width:100%; height:100%;
-    background: rgba(0,0,0,0.92);
-    z-index:-1;
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        rgba(0, 0, 0, 0.92),
+        rgba(0, 0, 0, 0.95)
+    );
+    z-index: -1;
 }
+
 
 </style>
 """, unsafe_allow_html=True)
