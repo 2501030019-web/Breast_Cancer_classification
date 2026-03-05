@@ -201,24 +201,23 @@ elif st.session_state.page == "Dataset":
 # ---------------- PREDICTION ----------------
 elif st.session_state.page == "Prediction":
 
-    st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.header("🔮 Upload CSV for Prediction")
+    st.header("Upload CSV for Prediction")
 
-    uploaded_file = st.file_uploader("Upload CSV file", type=["csv"])
+    uploaded_file = st.file_uploader("Upload CSV", type=["csv"])
 
     if uploaded_file is not None:
 
         user_data = pd.read_csv(uploaded_file)
 
-        # show uploaded data
-        st.write("Uploaded Data Preview")
+        st.write("Uploaded Data")
         st.dataframe(user_data.head())
 
         try:
 
-            # IMPORTANT: Match columns with training data
-            user_data = user_data[X.columns]
+            # Drop unnecessary columns
+            user_data = user_data.drop(columns=["id", "diagnosis"], errors="ignore")
 
+            # Prediction
             prediction = model.predict(user_data)
 
             user_data["Prediction"] = prediction
@@ -227,12 +226,11 @@ elif st.session_state.page == "Prediction":
                 1: "Benign (No Cancer)"
             })
 
-            st.success("Prediction Completed Successfully")
+            st.success("Prediction Successful")
             st.dataframe(user_data)
 
         except Exception as e:
-
-            st.error("CSV format incorrect. Please upload dataset with same 30 features.")
+            st.error(f"Error: {e}")
 
 # ---------------- VISUALIZATION ----------------
 elif st.session_state.page == "Visualization":
