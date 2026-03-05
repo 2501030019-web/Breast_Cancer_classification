@@ -7,175 +7,195 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 
+# ---------------- PAGE CONFIG ----------------
 st.set_page_config(page_title="Breast Cancer AI", layout="wide")
 
-# ---------------- SESSION ----------------
-if "logged_in" not in st.session_state:
-    st.session_state.logged_in = False
-if "page" not in st.session_state:
-    st.session_state.page = "Home"
-if "users" not in st.session_state:
-    st.session_state.users = {}
-
-# ---------------- CSS ----------------
+# ---------------- CUSTOM CSS ----------------
 st.markdown("""
 <style>
 
-section[data-testid="stSidebar"] {display:none;}
+/* REMOVE SIDEBAR */
+section[data-testid="stSidebar"] {
+    display: none;
+}
 
+/* FULL DARK MEDICAL GRADIENT BACKGROUND */
 .stApp {
-    background-image: url("https://images.unsplash.com/photo-1581093458791-9f3c3900df4b");
-    background-size: cover;
+    background: linear-gradient(135deg, #0f0c29, #1a0d1f, #000000);
     background-attachment: fixed;
-    background-position: center;
 }
 
-.stApp::before {
-    content:"";
-    position:fixed;
-    top:0; left:0;
-    width:100%; height:100%;
-    background: rgba(0,0,0,0.90);
-    z-index:-1;
-}
-
+/* TITLE */
 .title {
-    text-align:center;
-    font-size:60px;
-    color:#ff2e88;
-    margin-top:40px;
+    font-size: 65px;
+    font-weight: bold;
+    text-align: center;
+    color: #ff2e88;
+    margin-top: 40px;
 }
 
+.subtitle {
+    text-align: center;
+    color: #dddddd;
+    font-size: 22px;
+    margin-bottom: 50px;
+}
+
+/* NAVIGATION BAR */
+.navbar {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    padding: 20px;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    margin-top: 20px;
+}
+
+/* GLASS CARD */
 .card {
-    background:rgba(255,255,255,0.05);
-    padding:40px;
-    border-radius:25px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,46,136,0.3);
     backdrop-filter: blur(15px);
-    width:70%;
-    margin:40px auto;
-    border:1px solid rgba(255,46,136,0.3);
+    padding: 40px;
+    border-radius: 25px;
+    margin: 30px auto;
+    width: 85%;
+    transition: 0.4s;
 }
 
-.footer {
-    margin-top:100px;
-    padding:40px;
-    background:rgba(0,0,0,0.8);
-    text-align:center;
-    color:white;
+.card:hover {
+    transform: scale(1.02);
+    box-shadow: 0px 0px 40px rgba(255,46,136,0.4);
 }
 
+/* STAT BOX */
+.stat {
+    background: rgba(255,46,136,0.1);
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    font-size: 22px;
+    color: white;
+    border: 1px solid rgba(255,46,136,0.4);
+}
+
+/* BUTTON */
 .stButton>button {
-    background: linear-gradient(45deg,#ff2e88,#ff6bb5);
-    color:white;
-    border-radius:30px;
+    background: linear-gradient(45deg, #ff2e88, #ff6bb5);
+    color: white;
+    border-radius: 30px;
+    padding: 10px 25px;
+    border: none;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+.stButton>button:hover {
+    transform: scale(1.1);
 }
 
 </style>
 """, unsafe_allow_html=True)
 
-# ---------------- LOGIN / SIGNUP ----------------
-if not st.session_state.logged_in:
+# ---------------- NAVIGATION ----------------
+if "page" not in st.session_state:
+    st.session_state.page = "Home"
 
-    st.markdown('<div class="title">🎗 Breast Cancer AI Portal</div>', unsafe_allow_html=True)
+col1, col2, col3, col4 = st.columns(4)
 
-    option = st.radio("Select Option", ["Login", "Create Profile"], horizontal=True)
+with col1:
+    if st.button("🏠 Home"):
+        st.session_state.page = "Home"
+with col2:
+    if st.button("📊 Dataset"):
+        st.session_state.page = "Dataset"
+with col3:
+    if st.button("🔮 Prediction"):
+        st.session_state.page = "Prediction"
+with col4:
+    if st.button("📈 Visualization"):
+        st.session_state.page = "Visualization"
 
-    if option == "Login":
-        st.markdown('<div class="card">', unsafe_allow_html=True)
-        username = st.text_input("Username")
-        password = st.text_input("Password", type="password")
+# ---------------- TITLE ----------------
+st.markdown('<div class="title">🎗 Breast Cancer AI Detection</div>', unsafe_allow_html=True)
+st.markdown('<div class="subtitle">AI Powered Early Tumor Classification System</div>', unsafe_allow_html=True)
 
-        if st.button("Login"):
-            if username in st.session_state.users and st.session_state.users[username] == password:
-                st.session_state.logged_in = True
-                st.success("Login Successful!")
-                st.rerun()
-            else:
-                st.error("Invalid Credentials")
-        st.markdown('</div>', unsafe_allow_html=True)
+# ---------------- LOAD DATA ----------------
+data = load_breast_cancer()
+X = pd.DataFrame(data.data, columns=data.feature_names)
+y = data.target
 
-    else:
-        st.markdown('<div class="card">', unsafe_allow_html=True)
-        new_user = st.text_input("Create Username")
-        new_pass = st.text_input("Create Password", type="password")
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42)
 
-        if st.button("Create Profile"):
-            st.session_state.users[new_user] = new_pass
-            st.success("Profile Created! Please Login.")
-        st.markdown('</div>', unsafe_allow_html=True)
+model = LogisticRegression(max_iter=5000)
+model.fit(X_train, y_train)
 
-# ---------------- MAIN APP AFTER LOGIN ----------------
-else:
+accuracy = accuracy_score(y_test, model.predict(X_test))
 
-    # NAVIGATION
-    col1, col2, col3, col4 = st.columns(4)
+# ---------------- HOME ----------------
+if st.session_state.page == "Home":
+
+    col1, col2, col3 = st.columns(3)
 
     with col1:
-        if st.button("🏠 Home"):
-            st.session_state.page = "Home"
+        st.markdown('<div class="stat">📊 30+ Features</div>', unsafe_allow_html=True)
     with col2:
-        if st.button("🔮 Prediction"):
-            st.session_state.page = "Prediction"
+        st.markdown(f'<div class="stat">⚡ {round(accuracy*100,2)}% Accuracy</div>', unsafe_allow_html=True)
     with col3:
-        if st.button("📈 Visualization"):
-            st.session_state.page = "Visualization"
-    with col4:
-        if st.button("🚪 Logout"):
-            st.session_state.logged_in = False
-            st.rerun()
+        st.markdown('<div class="stat">🤖 Logistic Regression Model</div>', unsafe_allow_html=True)
 
-    st.markdown('<div class="title">Breast Cancer Detection System</div>', unsafe_allow_html=True)
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.header("🩺 About This Project")
+    st.write("""
+    This AI system helps in early detection of breast cancer tumors 
+    using machine learning classification techniques.
+    
+    ✔ Fast prediction  
+    ✔ Accurate model  
+    ✔ Medical focused UI  
+    ✔ Real-time data processing  
+    """)
+    st.markdown('</div>', unsafe_allow_html=True)
 
-    # LOAD DATA
-    data = load_breast_cancer()
-    X = pd.DataFrame(data.data, columns=data.feature_names)
-    y = data.target
+# ---------------- DATASET ----------------
+elif st.session_state.page == "Dataset":
 
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42)
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.header("📊 Dataset Preview")
+    st.dataframe(X.head())
+    st.markdown('</div>', unsafe_allow_html=True)
 
-    model = LogisticRegression(max_iter=5000)
-    model.fit(X_train, y_train)
+# ---------------- PREDICTION ----------------
+elif st.session_state.page == "Prediction":
 
-    accuracy = accuracy_score(y_test, model.predict(X_test))
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.header("🔮 Upload CSV for Prediction")
 
-    # HOME
-    if st.session_state.page == "Home":
-        st.markdown('<div class="card">', unsafe_allow_html=True)
-        st.header("About Project")
-        st.write("AI Powered Early Tumor Detection System.")
-        st.success(f"Model Accuracy: {round(accuracy*100,2)}%")
-        st.markdown('</div>', unsafe_allow_html=True)
+    uploaded_file = st.file_uploader("Upload CSV file (30 features required)", type=["csv"])
 
-    # PREDICTION
-    elif st.session_state.page == "Prediction":
-        st.markdown('<div class="card">', unsafe_allow_html=True)
-        uploaded_file = st.file_uploader("Upload CSV File", type=["csv"])
+    if uploaded_file:
+        user_data = pd.read_csv(uploaded_file)
+        prediction = model.predict(user_data)
+        user_data["Prediction"] = prediction
+        user_data["Prediction"] = user_data["Prediction"].map(
+            {0: "Malignant", 1: "Benign"})
 
-        if uploaded_file:
-            user_data = pd.read_csv(uploaded_file)
-            prediction = model.predict(user_data)
-            user_data["Prediction"] = prediction
-            user_data["Prediction"] = user_data["Prediction"].map(
-                {0: "Malignant", 1: "Benign"})
-            st.dataframe(user_data)
-        st.markdown('</div>', unsafe_allow_html=True)
+        st.success("Prediction Completed Successfully!")
+        st.dataframe(user_data)
 
-    # VISUALIZATION
-    elif st.session_state.page == "Visualization":
-        st.markdown('<div class="card">', unsafe_allow_html=True)
-        importance = pd.Series(model.coef_[0], index=X.columns)
-        importance.sort_values().plot(kind='barh', figsize=(8,10))
-        st.pyplot(plt)
-        st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
-    # CONTACT US FOOTER
-    st.markdown("""
-    <div class="footer">
-        <h3>📞 Contact Us</h3>
-        <p>Email: support@breastcancerai.com</p>
-        <p>Phone: +91 9876543210</p>
-        <p>Location: India</p>
-        <p>© 2026 Breast Cancer AI | All Rights Reserved</p>
-    </div>
-    """, unsafe_allow_html=True)
+# ---------------- VISUALIZATION ----------------
+elif st.session_state.page == "Visualization":
+
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.header("📈 Feature Importance")
+
+    importance = pd.Series(model.coef_[0], index=X.columns)
+    importance.sort_values().plot(kind='barh', figsize=(8,10))
+    st.pyplot(plt)
+
+    st.markdown('</div>', unsafe_allow_html=True)
