@@ -103,7 +103,7 @@ section[data-testid="stSidebar"] {
 
 /* DARK MEDICAL BACKGROUND IMAGE */
 .stApp {
-    background-image: url("https://images.unsplash.com/photo-1516542076529-1ea3854896c1");
+    background-image: url("/image/goggles.jpg");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
