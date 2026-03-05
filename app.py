@@ -199,39 +199,34 @@ elif st.session_state.page == "Dataset":
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ---------------- PREDICTION ----------------
-elif st.session_state.page == "Prediction":
+# ================= PREDICTION =================
 
-    st.header("Upload CSV for Prediction")
+uploaded_file = st.file_uploader("Upload CSV for Prediction", type=["csv"])
 
-    uploaded_file = st.file_uploader("Upload CSV", type=["csv"])
+if uploaded_file is not None:
 
-    if uploaded_file is not None:
+    data = pd.read_csv(uploaded_file)
 
-        user_data = pd.read_csv(uploaded_file)
+    st.write("Uploaded Data")
+    st.dataframe(data.head())
 
-        st.write("Uploaded Data")
-        st.dataframe(user_data.head())
+    # Remove unnecessary columns
+    data = data.drop(columns=["id", "diagnosis", "Unnamed: 32"], errors="ignore")
 
-        try:
+    # Check feature count
+    if data.shape[1] != 30:
+        st.error("CSV format incorrect. Please upload dataset with same 30 features.")
+    else:
+        prediction = model.predict(data)
 
-            # Drop unnecessary columns
-            user_data = user_data.drop(columns=["id", "diagnosis"], errors="ignore")
+        data["Prediction"] = prediction
 
-            # Prediction
-            prediction = model.predict(user_data)
+        # Convert 0/1 to Cancer Type
+        data["Prediction"] = data["Prediction"].map({0:"Benign",1:"Malignant"})
 
-            user_data["Prediction"] = prediction
-            user_data["Prediction"] = user_data["Prediction"].map({
-                0: "Malignant (Cancer)",
-                1: "Benign (No Cancer)"
-            })
+        st.success("Prediction Completed")
 
-            st.success("Prediction Successful")
-            st.dataframe(user_data)
-
-        except Exception as e:
-            st.error(f"Error: {e}")
-
+        st.dataframe(data)
 # ---------------- VISUALIZATION ----------------
 elif st.session_state.page == "Visualization":
 
