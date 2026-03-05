@@ -101,16 +101,16 @@ section[data-testid="stSidebar"] {
     display: none;
 }
 
-/* DARK MEDICAL BACKGROUND IMAGE */
+/* BACKGROUND IMAGE */
 .stApp {
-    background-image: url("/image/goggles.jpg");
+    background-image: url("https://images.pexels.com/photos/40568/medical-appointment-doctor-healthcare-40568.jpeg");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background-attachment: fixed;   /* Parallax scroll */
+    background-attachment: fixed;
 }
 
-/* DARK OVERLAY FOR BETTER VISIBILITY */
+/* DARK OVERLAY */
 .stApp::before {
     content: "";
     position: fixed;
@@ -118,26 +118,9 @@ section[data-testid="stSidebar"] {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.88);
+    background: rgba(0,0,0,0.85);
     z-index: -1;
 }
-
-/* TITLE */
-.title {
-    font-size: 65px;
-    font-weight: bold;
-    text-align: center;
-    color: #ff2e88;
-    margin-top: 40px;
-}
-
-.subtitle {
-    text-align: center;
-    color: #dddddd;
-    font-size: 22px;
-    margin-bottom: 50px;
-}
-
 
 </style>
 """, unsafe_allow_html=True)
