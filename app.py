@@ -96,9 +96,6 @@ section[data-testid="stSidebar"] {
     transform: scale(1.1);
 }
 
-st.markdown("""
-<style>
-
 /* REMOVE SIDEBAR */
 section[data-testid="stSidebar"] {
     display: none;
@@ -141,10 +138,6 @@ section[data-testid="stSidebar"] {
     margin-bottom: 50px;
 }
 
-/* Rest CSS same rahega */
-
-</style>
-""", unsafe_allow_html=True)
 
 </style>
 """, unsafe_allow_html=True)
