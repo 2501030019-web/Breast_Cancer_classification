@@ -101,16 +101,16 @@ section[data-testid="stSidebar"] {
     display: none;
 }
 
-/* BACKGROUND IMAGE */
+/* DARK BACKGROUND IMAGE */
 .stApp {
-    background-image: url("https://images.pexels.com/photos/40568/medical-appointment-doctor-healthcare-40568.jpeg");
+    background-image: url("https://images.pexels.com/photos/5726708/pexels-photo-5726708.jpeg");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
 }
 
-/* DARK OVERLAY */
+/* STRONG DARK OVERLAY */
 .stApp::before {
     content: "";
     position: fixed;
@@ -118,7 +118,10 @@ section[data-testid="stSidebar"] {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.85);
+    background: linear-gradient(
+        rgba(0, 0, 0, 0.92),
+        rgba(0, 0, 0, 0.95)
+    );
     z-index: -1;
 }
 
